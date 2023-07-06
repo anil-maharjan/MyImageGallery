@@ -108,7 +108,7 @@ const GalleryScreen: React.FC = ({route, navigation}: any) => {
         .then(() => {
           setImageFileNames(prevImageFileName => [
             ...prevImageFileName,
-            imageData.uri,
+            destPath,
           ]);
           console.log('Image saved successfully');
         })

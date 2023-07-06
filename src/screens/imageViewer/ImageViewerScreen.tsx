@@ -59,11 +59,15 @@ const ImageViewerScreen: React.FC = ({route, navigation}: any) => {
 
   const handleDeleteImage = async (imagePath: string) => {
     try {
-      await RNFS.unlink(imagePath);
+      const url = imagePath;
+      await RNFS.unlink(url.replace('file:///', ''));
       const imageUriList = imageUri.filter(
-        uriData => uriData.uri !== `file://${imagePath}`,
+        uriData => uriData.uri !== imagePath,
       );
       setImageUri(imageUriList);
+      if (currentImageIndex > 0) {
+        setCurrentImageIndex(currentImageIndex - 1);
+      }
       if (imageUriList.length <= 0) {
         onClose();
       }
@@ -72,35 +76,36 @@ const ImageViewerScreen: React.FC = ({route, navigation}: any) => {
     }
   };
 
-  const renderHeader = ({imageIndex}: HeaderProps) => (
-    <View style={[styles.headerContainer, styles.flexRow]}>
-      <View style={styles.flexRow}>
+  const renderHeader = () =>
+    imageUri.length ? (
+      <View style={[styles.headerContainer, styles.flexRow]}>
+        <View style={styles.flexRow}>
+          <TouchableOpacity
+            onPress={onClose}
+            style={styles.backBtn}
+            activeOpacity={0.8}>
+            <Icon
+              name="chevron-left"
+              size={responsiveSize(25)}
+              color={colors.textColor}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerText}>
+            {getFormattedDate(extractedDate(imageUri[currentImageIndex].uri))}
+          </Text>
+        </View>
         <TouchableOpacity
-          onPress={onClose}
+          onPress={() => handleDeleteImage(imageUri[currentImageIndex].uri)}
           style={styles.backBtn}
           activeOpacity={0.8}>
           <Icon
-            name="chevron-left"
+            name="trash-can-outline"
             size={responsiveSize(25)}
             color={colors.textColor}
           />
         </TouchableOpacity>
-        <Text style={styles.headerText}>
-          {getFormattedDate(extractedDate(imageFileNames[imageIndex]))}
-        </Text>
       </View>
-      <TouchableOpacity
-        onPress={() => handleDeleteImage(imageFileNames[imageIndex])}
-        style={styles.backBtn}
-        activeOpacity={0.8}>
-        <Icon
-          name="trash-can-outline"
-          size={responsiveSize(25)}
-          color={colors.textColor}
-        />
-      </TouchableOpacity>
-    </View>
-  );
+    ) : null;
 
   return (
     <ImageView
