@@ -15,14 +15,12 @@ import RNFS from 'react-native-fs';
 import {SCREENS} from '../../shared/constants';
 import theme from '../../shared/theme/theme';
 
-interface HeaderProps {
-  imageIndex: number;
-}
-
 const ImageViewerScreen: React.FC = ({route, navigation}: any) => {
   const {imageFileNames, item} = route.params;
   const [imageUri, setImageUri] = useState<{uri: string}[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+
+
 
   useEffect(() => {
     if (imageFileNames.length) {
